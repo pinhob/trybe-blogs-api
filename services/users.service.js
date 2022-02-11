@@ -55,15 +55,11 @@ const handleLogin = async (email, password) => {
   
   const emailAlreadyExists = await User.findOne({ where: { email } });
 
-  console.log('return:', emailAlreadyExists);
-
   if (!emailAlreadyExists) throw errorHandling(400, 'Invalid fields');
 
   const { id, password: storedPassword } = emailAlreadyExists;
   
   const passwordsMatch = password === storedPassword;
-
-  console.log('passwords', passwordsMatch);
 
   if (!passwordsMatch) throw errorHandling(400, 'Invalid fields');
 

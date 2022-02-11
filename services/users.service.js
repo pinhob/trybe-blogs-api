@@ -75,11 +75,7 @@ const handleLogin = async (email, password) => {
 const getUsers = async (authorization) => {
   if (!authorization) throw errorHandling(401, 'Token not found');
 
-  JWT.verify(authorization, process.env.JWT_SECRET, (err, decodedInfos) => {
-    if (err) throw errorHandling(401, 'Expired or invalid token');
-
-    return decodedInfos;
-  });
+  await validateToken(authorization);
 
   const usersStoredObj = await User.findAll();
 

@@ -6,7 +6,8 @@ const { createNewUserController,
   getUsersController,
   getUserByIdController } = require('./controllers/users.controller');
 
-const { createNewCategoryController } = require('./controllers/categories.controller');
+const { createNewCategoryController,
+  getCategoriesController } = require('./controllers/categories.controller');
 
 const app = express();
 
@@ -28,5 +29,7 @@ app.get('/user', getUsersController);
 app.get('/user/:id', getUserByIdController);
 
 app.post('/categories', createNewCategoryController);
+
+app.get('/categories', getCategoriesController);
 
 app.use(errorMiddleware);

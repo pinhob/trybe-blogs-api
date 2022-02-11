@@ -36,6 +36,19 @@ const createNewCategory = async (name, authorization) => {
   return category;
 };
 
+const getCategories = async (authorization) => {
+  if (!authorization) throw errorHandling(401, 'Token not found');
+
+  await validateToken(authorization);
+
+  const categories = await Category.findAll();
+
+  const categoriesList = Object.values(categories);
+
+  return categoriesList;
+};
+
 module.exports = {
   createNewCategory,
+  getCategories,
 };

@@ -60,7 +60,24 @@ const handleLogin = async (email, password) => {
   return { token };
 };
 
+const getUsers = async (authorization) => {
+  if (!authorization) throw errorHandling(401, 'Token not found');
+
+  JWT.verify(authorization, process.env.JWT_SECRET, (err, decodedInfos) => {
+    if (err) throw errorHandling(401, 'Expired or invalid token');
+
+    return decodedInfos;
+  });
+
+  const usersStoredObj = await User.findAll();
+
+  const userList = Object.values(usersStoredObj);
+
+  return userList;
+};
+
 module.exports = {
   createNewUser,
   handleLogin,
+  getUsers,
 };

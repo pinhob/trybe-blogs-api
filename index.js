@@ -2,7 +2,8 @@ const express = require('express');
 
 const { errorMiddleware } = require('./middlewares/error.middleware');
 const { createNewUserController,
-  handleLoginController } = require('./controllers/users.controller');
+  handleLoginController,
+  getUsersController } = require('./controllers/users.controller');
 
 const app = express();
 
@@ -18,5 +19,7 @@ app.get('/', (request, response) => {
 app.post('/user', createNewUserController);
 
 app.post('/login', handleLoginController);
+
+app.get('/user', getUsersController);
 
 app.use(errorMiddleware);

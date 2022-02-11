@@ -18,6 +18,18 @@ const handleLoginSchema = Joi.object({
   password: Joi.string().length(6).required(),
 });
 
+const validateToken = async (authorization) => {
+  const tokenInfos = await JWT.verify(authorization,
+    process.env.JWT_SECRET,
+    (err, decodedInfos) => {
+    if (err) throw errorHandling(401, 'Expired or invalid token');
+
+    return decodedInfos;
+  });
+
+  return tokenInfos;
+};
+
 const createNewUser = async (displayName, email, password, image) => {
   const { error } = newUserSchema.validate({ displayName, email, password, image });
 
@@ -76,8 +88,23 @@ const getUsers = async (authorization) => {
   return userList;
 };
 
+const getUserById = async (id, authorization) => {
+  if (!authorization) throw errorHandling(401, 'Token not found');
+
+  await validateToken(authorization);
+
+  const user = await User.findByPk(id);
+
+  if (!user) throw errorHandling(404, 'User does not exist');
+
+  const { dataValues: userInfos } = user;
+
+  return { ...userInfos };
+};
+
 module.exports = {
   createNewUser,
   handleLogin,
   getUsers,
+  getUserById,
 };

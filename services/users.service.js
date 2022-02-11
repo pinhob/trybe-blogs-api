@@ -13,6 +13,11 @@ const newUserSchema = Joi.object({
   image: Joi.string(),
 });
 
+const handleLoginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().length(6).required(),
+});
+
 const createNewUser = async (displayName, email, password, image) => {
   const { error } = newUserSchema.validate({ displayName, email, password, image });
 
@@ -31,6 +36,31 @@ const createNewUser = async (displayName, email, password, image) => {
   return { token };
 };
 
+const handleLogin = async (email, password) => {
+  const { error } = handleLoginSchema.validate({ email, password });
+
+  if (error) throw errorHandling(400, error.message);
+  
+  const emailAlreadyExists = await User.findOne({ where: { email } });
+
+  console.log('return:', emailAlreadyExists);
+
+  if (!emailAlreadyExists) throw errorHandling(400, 'Invalid fields');
+
+  const { id, password: storedPassword } = emailAlreadyExists;
+  
+  const passwordsMatch = password === storedPassword;
+
+  console.log('passwords', passwordsMatch);
+
+  if (!passwordsMatch) throw errorHandling(400, 'Invalid fields');
+
+  const token = JWT.sign({ id, email }, process.env.JWT_SECRET);
+
+  return { token };
+};
+
 module.exports = {
   createNewUser,
+  handleLogin,
 };

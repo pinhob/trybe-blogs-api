@@ -25,4 +25,6 @@ app.get('/user', getUsersController);
 
 app.get('/user/:id', getUserByIdController);
 
+app.post('/categories', );
+
 app.use(errorMiddleware);

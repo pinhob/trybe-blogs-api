@@ -9,7 +9,7 @@ const createBlogPostController = async (req, res, next) => {
 
     const newPost = await createBlogPost(title, content, categoryIds, authorization);
 
-    return res.status(200).json(newPost);
+    return res.status(201).json(newPost);
   } catch (error) {
     return next(error);
   }

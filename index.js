@@ -4,7 +4,8 @@ const { errorMiddleware } = require('./middlewares/error.middleware');
 const { createNewUserController,
   handleLoginController,
   getUsersController,
-  getUserByIdController } = require('./controllers/users.controller');
+  getUserByIdController,
+  deleteUserController } = require('./controllers/users.controller');
 
 const { createNewCategoryController,
   getCategoriesController } = require('./controllers/categories.controller');
@@ -44,5 +45,7 @@ app.get('/post', getPostsController);
 app.get('/post/:id', getPostByIdController);
 
 app.delete('/post/:id', deletePostByIdController);
+
+app.delete('/user/me', deleteUserController);
 
 app.use(errorMiddleware);

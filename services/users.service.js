@@ -94,9 +94,22 @@ const getUserById = async (id, authorization) => {
   return { ...userInfos };
 };
 
+const deleteUser = async (authorization) => {
+  if (!authorization) throw errorHandling(401, 'Token not found');
+
+  const { id } = await validateToken(authorization);
+
+  await User.destroy({
+    where: { id },
+  });
+
+  return true;
+};
+
 module.exports = {
   createNewUser,
   handleLogin,
   getUsers,
   getUserById,
+  deleteUser,
 };

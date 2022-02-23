@@ -12,7 +12,14 @@ const blogPostSchema = Joi.object({
   categoryIds: Joi.array().required(),
 });
 
+const updatePostSchema = Joi.object({
+  title: Joi.string().required(),
+  content: Joi.string().required(),
+});
+
 const validateToken = async (authorization) => {
+  if (!authorization) throw errorHandling(401, 'Token not found');
+
   const tokenInfos = await JWT.verify(authorization,
     process.env.JWT_SECRET,
     (err, decodedInfos) => {
@@ -36,8 +43,6 @@ const verifyIfCategoriesExists = async (categoryIds) => Promise.all(
 );
 
 const createBlogPost = async (title, content, categoryIds, authorization) => {
-  if (!authorization) throw errorHandling(401, 'Token not found');
-
   const token = await validateToken(authorization);
   const { id: userId } = token;
   
@@ -58,8 +63,6 @@ const createBlogPost = async (title, content, categoryIds, authorization) => {
 };
 
 const getPosts = async (authorization) => {
-  if (!authorization) throw errorHandling(401, 'Token not found');
-
   await validateToken(authorization);
 
   const posts = await BlogPost.findAll({
@@ -73,8 +76,6 @@ const getPosts = async (authorization) => {
 };
 
 const getPostById = async (authorization, id) => {
-  if (!authorization) throw errorHandling(401, 'Token not found');
-
   await validateToken(authorization);
 
   const post = await BlogPost.findOne({
@@ -91,8 +92,6 @@ const getPostById = async (authorization, id) => {
 };
 
 const deletePostById = async (authorization, id) => {
-  if (!authorization) throw errorHandling(401, 'Token not found');
-
   const token = await validateToken(authorization);
 
   const post = await BlogPost.findByPk(id);
@@ -110,9 +109,37 @@ const deletePostById = async (authorization, id) => {
   return true;
 };
 
+const updatePostById = async (title, content, categoryIds, authorization, id) => {
+  const token = await validateToken(authorization);
+
+  const { error } = updatePostSchema.validate({ title, content });
+
+  if (error) throw errorHandling(400, error.message);
+
+  if (categoryIds) throw errorHandling(400, 'Categories cannot be edited');
+
+  const post = await BlogPost.findOne({
+    where: { id },
+    include: [
+      { model: Category, as: 'categories', through: { attributes: [] } },
+    ],
+  });
+
+  const userIsPostAuthor = post.userId === token.id;
+
+  if (!userIsPostAuthor) throw errorHandling(401, 'Unauthorized user');
+
+  if (!post) throw errorHandling(404, 'Post does not exist');
+
+  await post.update({ title, content });
+
+  return post;
+};
+
 module.exports = {
   createBlogPost,
   getPosts,
   getPostById,
   deletePostById,
+  updatePostById,
 };

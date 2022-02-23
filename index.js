@@ -13,7 +13,8 @@ const { createNewCategoryController,
 const { createBlogPostController,
   getPostsController,
   getPostByIdController,
-  deletePostByIdController } = require('./controllers/blogPosts.controler');
+  deletePostByIdController,
+  updatePostByIdController } = require('./controllers/blogPosts.controler');
 
 const app = express();
 
@@ -43,6 +44,8 @@ app.post('/post', createBlogPostController);
 app.get('/post', getPostsController);
 
 app.get('/post/:id', getPostByIdController);
+
+app.put('/post/:id', updatePostByIdController);
 
 app.delete('/post/:id', deletePostByIdController);
 

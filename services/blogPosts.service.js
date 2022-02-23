@@ -90,8 +90,29 @@ const getPostById = async (authorization, id) => {
   return post;
 };
 
+const deletePostById = async (authorization, id) => {
+  if (!authorization) throw errorHandling(401, 'Token not found');
+
+  const token = await validateToken(authorization);
+
+  const post = await BlogPost.findByPk(id);
+
+  if (!post) throw errorHandling(404, 'Post does not exist');
+
+  const userIsPostAuthor = post.userId === token.id;
+
+  if (!userIsPostAuthor) throw errorHandling(401, 'Unauthorized user');
+
+  await BlogPost.destroy({
+    where: { id },
+  });
+
+  return true;
+};
+
 module.exports = {
   createBlogPost,
   getPosts,
   getPostById,
+  deletePostById,
 };

@@ -1,6 +1,7 @@
 const { createBlogPost,
   getPosts,
-  getPostById } = require('../services/blogPosts.service');
+  getPostById,
+  deletePostById } = require('../services/blogPosts.service');
 
 const createBlogPostController = async (req, res, next) => {
   try {
@@ -42,8 +43,22 @@ const getPostByIdController = async (req, res, next) => {
   }
 };
 
+const deletePostByIdController = async (req, res, next) => {
+  try {
+    const { authorization } = req.headers;
+    const { id } = req.params;
+
+    await deletePostById(authorization, id);
+
+    return res.status(204).send();
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   createBlogPostController,
   getPostsController,
   getPostByIdController,
+  deletePostByIdController,
 };

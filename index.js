@@ -11,7 +11,8 @@ const { createNewCategoryController,
 
 const { createBlogPostController,
   getPostsController,
-  getPostByIdController } = require('./controllers/blogPosts.controler');
+  getPostByIdController,
+  deletePostByIdController } = require('./controllers/blogPosts.controler');
 
 const app = express();
 
@@ -41,5 +42,7 @@ app.post('/post', createBlogPostController);
 app.get('/post', getPostsController);
 
 app.get('/post/:id', getPostByIdController);
+
+app.delete('/post/:id', deletePostByIdController);
 
 app.use(errorMiddleware);

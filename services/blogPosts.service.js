@@ -4,7 +4,7 @@ const Joi = require('joi');
 const JWT = require('jsonwebtoken');
 const errorHandling = require('../utils/errorHandling');
 
-const { BlogPost, PostsCategory, Category } = require('../models');
+const { BlogPost, PostsCategory, Category, User } = require('../models');
 
 const blogPostSchema = Joi.object({
   title: Joi.string().required(),
@@ -57,6 +57,22 @@ const createBlogPost = async (title, content, categoryIds, authorization) => {
   return newPost;
 };
 
+const getPosts = async (authorization) => {
+  if (!authorization) throw errorHandling(401, 'Token not found');
+
+  await validateToken(authorization);
+
+  const posts = await BlogPost.findAll({
+    include: [
+      { model: Category, as: 'categories' },
+      { model: User, as: 'user' },
+    ],
+  });
+
+  return posts;
+};
+
 module.exports = {
   createBlogPost,
+  getPosts,
 };

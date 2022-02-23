@@ -7,7 +7,7 @@
       foreignKey: true,
     },
     published: DataTypes.DATE,
-    uptaded: DataTypes.DATE,
+    updated: DataTypes.DATE,
   }, {
     timestamps: false,
   });

@@ -60,10 +60,9 @@ const deletePostByIdController = async (req, res, next) => {
 const updatePostByIdController = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { title, content, categoryIds } = req.body;
     const { authorization } = req.headers;
 
-    const uptadedPost = await updatePostById(title, content, categoryIds, authorization, id);
+    const uptadedPost = await updatePostById(req.body, authorization, id);
 
     return res.status(200).json(uptadedPost);
   } catch (error) {

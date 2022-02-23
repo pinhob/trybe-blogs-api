@@ -109,7 +109,9 @@ const deletePostById = async (authorization, id) => {
   return true;
 };
 
-const updatePostById = async (title, content, categoryIds, authorization, id) => {
+const updatePostById = async (body, authorization, id) => {
+  const { title, content, categoryIds } = body;
+
   const token = await validateToken(authorization);
 
   const { error } = updatePostSchema.validate({ title, content });

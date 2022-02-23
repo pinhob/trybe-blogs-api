@@ -72,7 +72,26 @@ const getPosts = async (authorization) => {
   return posts;
 };
 
+const getPostById = async (authorization, id) => {
+  if (!authorization) throw errorHandling(401, 'Token not found');
+
+  await validateToken(authorization);
+
+  const post = await BlogPost.findOne({
+    where: { id },
+    include: [
+      { model: Category, as: 'categories', through: { attributes: [] } },
+      { model: User, as: 'user' },
+    ],
+  });
+
+  if (!post) throw errorHandling(404, 'Post does not exist');
+
+  return post;
+};
+
 module.exports = {
   createBlogPost,
   getPosts,
+  getPostById,
 };

@@ -1,5 +1,6 @@
 const { createBlogPost,
-  getPosts } = require('../services/blogPosts.service');
+  getPosts,
+  getPostById } = require('../services/blogPosts.service');
 
 const createBlogPostController = async (req, res, next) => {
   try {
@@ -28,7 +29,21 @@ const getPostsController = async (req, res, next) => {
   }
 };
 
+const getPostByIdController = async (req, res, next) => {
+  try {
+    const { authorization } = req.headers;
+    const { id } = req.params;
+
+    const post = await getPostById(authorization, id);
+
+    return res.status(200).json(post);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   createBlogPostController,
   getPostsController,
+  getPostByIdController,
 };
